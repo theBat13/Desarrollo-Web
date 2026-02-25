@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0ede8;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(180,160,120,0.12) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.03) 28px),
+      repeating-linear-gradient(90deg, transparent, transparent 27px, rgba(0,0,0,0.03) 28px);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .page-wrapper {
+    width: 100%;
+    max-width: 960px;
+  }
+
+  /* Title badge */
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .badge {
+    background: #1a1a1a;
+    color: #f0c96c;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+  }
+  .page-title-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #1a1a1a40, transparent);
+  }
+  .page-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.05em;
+  }
+
+  /* Card */
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.9) inset,
+      0 2px 4px rgba(0,0,0,0.04),
+      0 8px 32px rgba(0,0,0,0.09),
+      0 0 0 1px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+
+  /* Card header strip */
+  .card-header {
+    background: #1a1a1a;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .card-header-dots {
+    display: flex; gap: 6px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  /* The actual table */
+  .hoja-registro {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .hoja-registro th, .hoja-registro td {
+    border: 1.5px solid #ddd;
+    padding: 0;
+  }
+
+  /* Dark header */
+  .encabezado-oscuro {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    color: #f0c96c;
+    padding: 11px 8px;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-color: #111 !important;
+  }
+
+  /* Light sub-header */
+  .fondo-claro {
+    background: #f7f5f1;
+    color: #444;
+  }
+
+  /* Inner tables */
+  .tabla-interna {
+    width: 100%;
+    border-collapse: collapse;
+    height: 100%;
+  }
+  .tabla-interna td {
+    border: none;
+    border-right: 1px solid #e0ddd8;
+    border-bottom: 1px solid #e0ddd8;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #555;
+    font-weight: 500;
+  }
+  .tabla-interna tr:last-child td { border-bottom: none; }
+  .tabla-interna td:last-child { border-right: none; }
+
+  /* Carreras row */
+  .carrera-label {
+    background: #1a1a1a;
+    color: #f0c96c;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    border-right: 1px solid #333 !important;
+    border-bottom: 1px solid #333 !important;
+  }
+  .carrera-label:last-child { border-right: none !important; }
+  .carrera-label.last-row { border-bottom: none !important; }
+
+  .grupo-row td {
+    background: #f7f5f1;
+    color: #666;
+    font-size: 11px;
+    text-align: left;
+    padding-left: 10px;
+  }
+
+  /* Checkbox */
+  .check-row { display: flex; align-items: center; gap: 10px; padding: 5px 10px; }
+  .check-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #333;
+    letter-spacing: 0.08em;
+    min-width: 12px;
+  }
+  .caja-check {
+    width: 16px; height: 16px;
+    border: 1.5px solid #aaa;
+    background: white;
+    border-radius: 3px;
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    transition: border-color 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .caja-check:hover { border-color: #f0c96c; }
+
+  /* Hr fields */
+  .field-row td {
+    text-align: left;
+    padding: 5px 10px;
+    color: #888;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    background: #fafaf8;
+  }
+  .field-row td::after {
+    content: '';
+    display: block;
+    margin-top: 2px;
+    width: 70%;
+    height: 1px;
+    background: #e0ddd8;
+  }
+
+  /* Data rows */
+  .fila-datos > td {
+    height: 72px;
+    background: #fff;
+    vertical-align: top;
+  }
+  .fila-datos > td:first-child {
+    background: linear-gradient(to right, #fcfbf9, #fff);
+  }
+  .fila-datos .tabla-interna td {
+    background: #fff;
+  }
+
+  /* Row number indicator */
+  .row-num {
+    position: relative;
+  }
+  .row-num::before {
+    content: attr(data-row);
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #ccc;
+    letter-spacing: 0.05em;
+  }
+
+  /* Hover effect on data rows */
+  .fila-datos:hover > td {
+    background: #fffdf7;
+  }
+
+  /* Footer */
+  .card-footer {
+    background: #f7f5f1;
+    padding: 10px 22px;
+    border-top: 1px solid #e8e5e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #aaa;
+    letter-spacing: 0.08em;
+  }
+  .status-pill {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #a5d6a7;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <div class="page-title">
+    <div class="badge">Hoja de Registro</div>
+    <div class="page-title-line"></div>
+    <div class="page-date" id="fecha-hoy"></div>
+  </div>
+
+  <div class="card">
+
+    <div class="card-header">
+      <span class="card-header-title">AlanBat</span>
+    </div>
+
+    <table class="hoja-registro">
+      <tr>
+        <td class="encabezado-oscuro" rowspan="2" style="width:24%;">Nombre</td>
+        <td class="encabezado-oscuro" style="width:15%;">Carrera</td>
+        <td class="encabezado-oscuro" style="width:10%;">Alum / Profr</td>
+        <td class="encabezado-oscuro" rowspan="2" style="width:11%;">Préstamo</td>
+        <td class="encabezado-oscuro" style="width:20%;">Hr. de Préstamo</td>
+        <td class="encabezado-oscuro" style="width:20%;">Hr. de Entrega</td>
+      </tr>
+
+      <tr>
+        <!-- Carrera -->
+        <td class="fondo-claro">
+          <table class="tabla-interna">
+            <tr>
+              <td class="carrera-label">C</td>
+              <td class="carrera-label">G</td>
+              <td class="carrera-label">S</td>
+              <td class="carrera-label">IP</td>
+              <td class="carrera-label">IN</td>
+            </tr>
+            <tr class="grupo-row">
+              <td colspan="5">Grupo: ________</td>
+            </tr>
+          </table>
+        </td>
+
+        <!-- Alum/Profr -->
+        <td class="fondo-claro">
+          <div class="check-row">
+            <span class="check-label">A</span>
+            <div class="caja-check"></div>
+          </div>
+          <div class="check-row">
+            <span class="check-label">P</span>
+            <div class="caja-check"></div>
+          </div>
+        </td>
+
+        <!-- Hr. Préstamo -->
+        <td class="fondo-claro">
+          <table class="tabla-interna">
+            <tr class="field-row"><td>Fecha:</td></tr>
+            <tr class="field-row"><td>Hora:</td></tr>
+            <tr class="field-row"><td>Firma:</td></tr>
+          </table>
+        </td>
+
+        <!-- Hr. Entrega -->
+        <td class="fondo-claro">
+          <table class="tabla-interna">
+            <tr class="field-row"><td>Fecha:</td></tr>
+            <tr class="field-row"><td>Hora:</td></tr>
+            <tr class="field-row"><td>Firma:</td></tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DATA ROWS -->
+      <!-- Generate several rows -->
+      <tr class="fila-datos">
+        <td class="row-num" data-row="01"></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="5"></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table></td>
+        <td></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+      </tr>
+
+      <tr class="fila-datos">
+        <td class="row-num" data-row="02"></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="5"></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table></td>
+        <td></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+      </tr>
+
+      <tr class="fila-datos">
+        <td class="row-num" data-row="03"></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="5"></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table></td>
+        <td></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+      </tr>
+
+      <tr class="fila-datos">
+        <td class="row-num" data-row="04"></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="5"></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table></td>
+        <td></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+      </tr>
+
+      <tr class="fila-datos">
+        <td class="row-num" data-row="05"></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="5"></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td><td></td></tr><tr><td></td><td></td></tr></table></td>
+        <td></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+        <td style="padding:0;"><table class="tabla-interna"><tr><td></td></tr><tr><td></td></tr><tr><td></td></tr></table></td>
+      </tr>
+
+    </table>
+
+    <div class="card-footer">
+      <span class="footer-info">CTRL-PRÉSTAMOS · v2025</span>
+      <span class="status-pill">● Activo</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const d = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('fecha-hoy').textContent = d.toLocaleDateString('es-MX', opts);
+</script>
+
+</body>
+</html>
